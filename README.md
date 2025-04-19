@@ -17,6 +17,11 @@ ORIGINAL By https://github.com/soh335/radicast
 $ go install github.com/omiso46/radcast@latest
 ```
 
+## ビルド方法
+```sh
+go build
+```
+
 ## 使い方
 ### 設定ファイル
 ```
