@@ -181,9 +181,6 @@ func (s *Server) rss(baseURL *url.URL) (*PodcastRss, error) {
 	channel.ITunesExplicit = "No"
 	channel.ITunesKeywords = "radiko,radio"
 	channel.ITunesImage.Href = baseURL.String() + "/radcast.png"
-	//	channel.RawvoiceRating = "radio"
-	//	channel.RawvoiceLocation = "Japan"
-	//	channel.RawvoiceFrequency = "Program"
 	channel.ITunesCategory.Text = "Music"
 	channel.PubDate = PubDate{time.Now()}
 
@@ -234,8 +231,6 @@ func (s *Server) itemByDir(dir string, baseURL *url.URL) (*PodcastItem, error) {
 	item.Title = prog.Title
 	item.Link = prog.URL
 
-	// ft, _ := prog.FtTime()
-	// item.PubDate = PubDate{ft}
 	item.PubDate = PubDate{medStat.ModTime()}
 
 	item.ITunesAuthor = prog.Pfm
@@ -244,7 +239,8 @@ func (s *Server) itemByDir(dir string, baseURL *url.URL) (*PodcastItem, error) {
 	} else {
 		item.Description = prog.Info
 	}
-	item.Description += "<br><br>" + item.PubDate.String()
+	item.Description += "<br><br>" + fmtDateTime(prog.Ft) + " - " + fmtDateTime(prog.To)
+	item.Description += "<br><br><center><img src=\"" + prog.Img + "\" width=\"80%\"></center>"
 
 	item.Enclosure.URL = baseURL.ResolveReference(u).String()
 	item.Enclosure.Length = int(medStat.Size())
@@ -260,9 +256,6 @@ func (s *Server) itemByDir(dir string, baseURL *url.URL) (*PodcastItem, error) {
 		return nil, err
 	}
 	item.ITunesImage.Href = baseURL.ResolveReference(iu).String()
-
-	//	item.ITunesKeywords = "radiko,radio"
-	//	item.ITunesExplicit = "No"
 
 	return &item, nil
 }
@@ -303,4 +296,10 @@ func fmtDuration(sec string) string {
 	s := d / time.Second
 
 	return fmt.Sprintf("%02d:%02d:%02d", h, m, s)
+}
+
+func fmtDateTime(datetime string) string {
+	return fmt.Sprintf("%s/%s/%s %s:%s:%s",
+		datetime[0:4], datetime[4:6], datetime[6:8],
+		datetime[8:10], datetime[10:12], datetime[12:14])
 }
